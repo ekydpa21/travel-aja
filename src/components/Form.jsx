@@ -4,21 +4,54 @@ import { submitAction, autoGenerateUserAction } from "../store/actions/user"
 import formContents from "../data/formContents"
 import emptyForm from "../data/emptyForm.json"
 
+const ValidateEmail = (inputText) => {
+  let mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+  if (inputText.match(mailformat)) {
+    return true
+  } else {
+    return false
+  }
+}
+const ValidatePassword = (inputText) => {
+  let strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})")
+  if (inputText.match(strongRegex)) {
+    return true
+  } else {
+    return false
+  }
+}
+
 const Form = () => {
   const dispatch = useDispatch()
   const [user, setUser] = useState(emptyForm)
+  const [error, setError] = useState(emptyForm)
 
   const handleChange = (e) => {
     const name = e.target.name
-    const value = e.target.value
+    const value = name === "dob" ? new Date(e.target.value).toISOString() : e.target.value
+
+    if (name === "emailaddress") {
+      const isValidated = ValidateEmail(value)
+      setError({ ...error, [name]: isValidated ? "" : "wrong email format" })
+    }
+    if (name === "password") {
+      const isValidated = ValidatePassword(value)
+      setError({ ...error, [name]: isValidated ? "" : "wrong password format" })
+    }
+
     setUser({ ...user, [name]: value })
   }
   const handleCancel = () => {
     setUser(emptyForm)
   }
   const handleSubmit = () => {
-    dispatch(submitAction(user))
-    setUser(emptyForm)
+    const { fullname, emailaddress, dob, address, phonenumber, password } = user
+    if ([fullname, emailaddress, dob, address, phonenumber, password].includes("")) {
+      alert("Please fill all of the forms")
+    } else {
+      dispatch(submitAction(user))
+      setUser(emptyForm)
+    }
   }
   const handleAutoGenerate = () => {
     dispatch(autoGenerateUserAction())
@@ -43,7 +76,10 @@ const Form = () => {
 
           return (
             <div key={index}>
-              <h3 className="text-sm font-medium mb-1">{formContent.title}</h3>
+              <div className="flex justify-between">
+                <h3 className="text-sm font-medium mb-1">{formContent.title}</h3>
+                {error[inputName].length > 0 && <p className="text-sm font-light mt-1 text-red-600">{error[inputName]}</p>}
+              </div>
               <div className="flex">
                 {withPrefix && <div className="w-[52px] rounded-md rounded-r-none flex items-center justify-center text-sm text-[#D1D5DB] bg-[#F9FAFB]">+62</div>}
                 <input

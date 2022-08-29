@@ -1,4 +1,4 @@
-import React from "react"
+import { useState, useEffect } from "react"
 import searchIcon from "../assets/search-icon.svg"
 import noContent from "../assets/no-content.svg"
 import CardUser from "./CardUser"
@@ -9,10 +9,21 @@ const Users = () => {
   const dispatch = useDispatch()
 
   const { users } = useSelector((state) => state.user)
+  const [filterValue, setFilterValue] = useState("")
+  const [shownUsers, setShownUsers] = useState([])
+
+  useEffect(() => {
+    const filterUser = users.filter((user) => user?.fullname?.toLowerCase()?.includes(filterValue) || user?.name?.first?.toLowerCase()?.includes(filterValue) || user?.name?.last?.toLowerCase()?.includes(filterValue))
+    setShownUsers(filterUser)
+  }, [filterValue, users])
 
   const clearButtonColor = users.length ? "text-[#E54B41]" : "text-[#979797]"
   const clearButtonEvent = !users.length ? "pointer-events-none" : ""
 
+  const handleChange = (e) => {
+    const value = e.target.value
+    setFilterValue(value)
+  }
   const handleClear = () => {
     dispatch(clearUsersAction())
   }
@@ -31,7 +42,7 @@ const Users = () => {
       {/* Filter */}
       <div className="w-full py-12 relative">
         <img src={searchIcon} alt="search-icon" className="absolute mt-[7px] ml-[13px]" />
-        <input className="text-sm border rounded-md h-[38px] border-[#D1D5DB] px-[45px]" placeholder="Search Anything" type="text" />
+        <input className="text-sm border rounded-md h-[38px] border-[#D1D5DB] px-[45px]" placeholder="Search Anything" type="text" onChange={handleChange} />
       </div>
 
       {/* List Users */}
@@ -43,7 +54,7 @@ const Users = () => {
           </div>
         ) : (
           <div className="w-full grid grid-cols-4 gap-6">
-            {users?.map((user, index) => {
+            {shownUsers?.map((user, index) => {
               const name = user.fullname ?? `${user.name.title}. ${user.name.first} ${user.name.last}`
               const picture = user?.picture?.medium
               const initial = user?.fullname?.[0]?.toUpperCase()

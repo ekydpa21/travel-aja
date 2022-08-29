@@ -1,8 +1,8 @@
 {
-  "address": "",
-  "dob": "",
-  "emailaddress": "",
   "fullname": "",
-  "password": "",
-  "phonenumber": ""
+  "emailaddress": "",
+  "dob": "",
+  "address": "",
+  "phonenumber": "",
+  "password": ""
 }
