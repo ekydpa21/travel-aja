@@ -2,14 +2,19 @@ import React from "react"
 import searchIcon from "../assets/search-icon.svg"
 import noContent from "../assets/no-content.svg"
 import CardUser from "./CardUser"
+import { useDispatch, useSelector } from "react-redux"
+import { clearUsersAction } from "../store/actions/user"
 
 const Users = () => {
-  const users = [1]
+  const dispatch = useDispatch()
+
+  const { users } = useSelector((state) => state.user)
+
   const clearButtonColor = users.length ? "text-[#E54B41]" : "text-[#979797]"
   const clearButtonEvent = !users.length ? "pointer-events-none" : ""
 
   const handleClear = () => {
-    console.log("clicked")
+    dispatch(clearUsersAction())
   }
 
   return (
@@ -38,9 +43,13 @@ const Users = () => {
           </div>
         ) : (
           <div className="w-full grid grid-cols-4 gap-6">
-            <CardUser />
-            <CardUser />
-            <CardUser />
+            {users?.map((user, index) => {
+              const name = user.fullname ?? `${user.name.title}. ${user.name.first} ${user.name.last}`
+              const picture = user?.picture?.medium
+              const initial = user?.fullname?.[0]?.toUpperCase()
+
+              return <CardUser key={index} name={name} picture={picture} initial={initial} />
+            })}
           </div>
         )}
       </div>
