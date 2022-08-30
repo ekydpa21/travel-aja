@@ -13,8 +13,16 @@ const ValidateEmail = (inputText) => {
   }
 }
 const ValidatePassword = (inputText) => {
-  let strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})")
+  let strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{6,})")
   if (inputText.match(strongRegex)) {
+    return true
+  } else {
+    return false
+  }
+}
+const ValidateName = (inputText) => {
+  let letters = /^[A-Za-z ]+$/
+  if (inputText.match(letters)) {
     return true
   } else {
     return false
@@ -30,6 +38,13 @@ const Form = () => {
     const name = e.target.name
     const value = name === "dob" ? new Date(e.target.value).toISOString() : e.target.value
 
+    if (name === "fullname") {
+      const isValidated = ValidateName(value)
+      const isPassedValidate = isValidated ? "" : "wrong name format"
+      const isLengthMoreThan50 = value.length > 50 ? "max length is 50" : isPassedValidate
+      const isEmpty = value.length === 0 ? "Full Name Cannot Be Empty" : isLengthMoreThan50
+      setError({ ...error, [name]: isEmpty })
+    }
     if (name === "emailaddress") {
       const isValidated = ValidateEmail(value)
       setError({ ...error, [name]: isValidated ? "" : "wrong email format" })
@@ -48,9 +63,12 @@ const Form = () => {
     const { fullname, emailaddress, dob, address, phonenumber, password } = user
     if ([fullname, emailaddress, dob, address, phonenumber, password].includes("")) {
       alert("Please fill all of the forms")
+    } else if (error.fullname !== "" || error.emailaddress !== "" || error.dob !== "" || error.address !== "" || error.phonenumber !== "" || error.password !== "") {
+      alert("Please fill all of the required format")
     } else {
       dispatch(submitAction(user))
       setUser(emptyForm)
+      setError(emptyForm)
     }
   }
   const handleAutoGenerate = () => {
