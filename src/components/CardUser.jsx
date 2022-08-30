@@ -1,14 +1,46 @@
-import React from "react"
+import { useState } from "react"
 import DividerAction from "../assets/divider-action.svg"
-import userIcon from "../assets/userIcon.png"
-import smsIcon from "../assets/smsIcon.svg"
-import calendarIcon from "../assets/calendarIcon.svg"
-import mapIcon from "../assets/mapIcon.svg"
-import mobileIcon from "../assets/mobileIcon.svg"
-import lockIcon from "../assets/lockIcon.svg"
+import Icons from "./Icons"
 
-const CardUser = ({ name, picture, initial }) => {
-  const actionIcons = [userIcon, smsIcon, calendarIcon, mapIcon, mobileIcon, lockIcon]
+const CardUser = ({ name, picture, initial, email, dob, address, phone, password }) => {
+  const actionIcons = ["user", "sms", "calendar", "map", "mobile", "lock"]
+  const [activeAction, setActiveAction] = useState(0)
+
+  const handleActiveAction = (tab) => {
+    setActiveAction(tab)
+  }
+
+  const day = new Date(dob).getDate()
+  const month = new Date(dob).getMonth() + 1
+  const year = new Date(dob).getFullYear()
+  const date = `${day}/${month}/${year}`
+
+  const info = {
+    0: {
+      label: "Hi, My name is",
+      value: name,
+    },
+    1: {
+      label: "My email address is",
+      value: email,
+    },
+    2: {
+      label: "My birhtday is",
+      value: date,
+    },
+    3: {
+      label: "My address is",
+      value: address,
+    },
+    4: {
+      label: "My phone number is",
+      value: `(+62) ${phone}`,
+    },
+    5: {
+      label: "My password is",
+      value: password,
+    },
+  }
 
   return (
     <div className="h-[322px] rounded-lg shadow-user_card">
@@ -23,22 +55,26 @@ const CardUser = ({ name, picture, initial }) => {
         )}
 
         <div className="flex flex-col items-center">
-          <p className="text-sm font-light mb-1 text-[#6B7280]">Hi, My name is</p>
-          <p className="text-base font-medium">{name}</p>
+          <p className="text-sm font-light mb-1 text-[#6B7280]">{info[activeAction].label}</p>
+          <p className="text-base font-medium">{info[activeAction].value}</p>
         </div>
       </div>
 
       <div className="grid grid-cols-6">
         {actionIcons.map((_, index) => {
-          return index === 0 && <img src={DividerAction} alt="divider-action" key={index} className="w-full" />
+          return index === activeAction ? <img src={DividerAction} alt="divider-action" key={index} className="w-full" /> : <div className="border-b-[1px]" key={index} />
         })}
       </div>
 
       <div className="border-t-[1px] grid grid-cols-6">
         {actionIcons.map((icon, index) => {
+          const iconColor = index === activeAction ? "#E54B41" : "#4B5563"
+
           return (
-            <div className="border-t-[1px] flex justify-center items-center h-[57px]" key={index}>
-              <img src={icon} alt="action-icons" />
+            <div className={`flex justify-center items-center h-[57px]`} key={index} onClick={() => handleActiveAction(index)}>
+              <div className="cursor-pointer">
+                <Icons icon={icon} color={iconColor} className="cursor-pointer" />
+              </div>
             </div>
           )
         })}

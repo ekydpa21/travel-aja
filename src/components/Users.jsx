@@ -55,11 +55,16 @@ const Users = () => {
         ) : (
           <div className="w-full grid grid-cols-4 gap-6">
             {shownUsers?.map((user, index) => {
-              const name = user.fullname ?? `${user.name.title}. ${user.name.first} ${user.name.last}`
-              const picture = user?.picture?.medium
               const initial = user?.fullname?.[0]?.toUpperCase()
+              const picture = user?.picture?.medium
+              const name = user.fullname ?? `${user.name.title}. ${user.name.first} ${user.name.last}`
+              const email = user?.emailaddress ?? user?.email
+              const dob = user?.dob?.date ?? user?.dob
+              const address = user?.address ?? user?.location?.city
+              const phone = user?.phonenumber ?? user?.phone
+              const password = user?.password ?? user?.login?.password
 
-              return <CardUser key={index} name={name} picture={picture} initial={initial} />
+              return <CardUser key={index} name={name} picture={picture} initial={initial} email={email} dob={dob} address={address} phone={phone} password={password} />
             })}
           </div>
         )}

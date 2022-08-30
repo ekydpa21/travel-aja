@@ -74,6 +74,12 @@ const Form = () => {
           const withPrefix = formattedInputName === "phonenumber"
           const borderRadius = withPrefix ? "rounded-l-none rounded-md" : "rounded-md"
 
+          const day = new Date(user["dob"]).getDate()
+          const month = new Date(user["dob"]).getMonth() + 1
+          const year = new Date(user["dob"]).getFullYear()
+          const date = `${year}-${month < 10 && "0"}${month}-${day}`
+          const inputValue = inputName === "dob" ? date : user[inputName]
+
           return (
             <div key={index}>
               <div className="flex justify-between">
@@ -85,7 +91,7 @@ const Form = () => {
                 <input
                   className={`text-sm border ${borderRadius} h-[38px] border-[#D1D5DB] ${formWidth} px-[13px]`}
                   name={inputName}
-                  value={user[inputName] ?? ""}
+                  value={inputValue ?? ""}
                   type={formContent.type}
                   placeholder={formContent.placeHolder}
                   onChange={handleChange}
